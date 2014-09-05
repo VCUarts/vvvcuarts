@@ -10,17 +10,20 @@ mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON vvvcuarts.* TO wp@loca
 # Download WordPress
 if [ ! -d htdocs ]
 then
-	echo "Checking out WordPress SVN"
-	svn checkout http://svn.automattic.com/wordpress/trunk/ htdocs
-	cd htdocs
-	wp core config --dbname="vvvcuarts" --dbuser=wp --dbpass=wp --dbhost="localhost"
-	cd wp-content/themes
+  echo "Checking out WordPress SVN"
+  svn checkout http://svn.automattic.com/wordpress/trunk/ htdocs
+  cd htdocs
+  wp core config --dbname="vvvcuarts" --dbuser=wp --dbpass=wp --dbhost="localhost"
+  cd wp-content/themes
   git clone https://github.com/streeetlamp/bones.git vvvcuarts
   cd vvvcuarts
+  echo "npm install"
   npm install
+  echo "bundle install"
+  bundle install
 else
-	echo "Updating WordPress SVN"
-	svn up htdocs
+  echo "Updating WordPress SVN"
+  svn up htdocs
 fi
 
 # The Vagrant site setup script will restart Nginx for us
