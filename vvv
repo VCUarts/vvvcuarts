@@ -397,6 +397,7 @@ if [[ $action = 'new' || $action = 'make' || $action = 'create' ]]; then
 "\tbundle install\n"\
 "\tnpm install\n"\
 "cd -\n"\
+"\twp theme activate $site\n"\
 "else\n"\
 "\techo 'Updating WordPress in $site/htdocs...'\n"\
 "\twp core update --allow-root\n"\
