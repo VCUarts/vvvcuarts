@@ -303,6 +303,37 @@ if [[ $action = 'new' || $action = 'make' || $action = 'create' ]]; then
 		done
 	fi
 
+
+
+
+	# Ask if we have a git repo for the theme
+	while [ -z $set_git_remote ]; do
+		echo -n "Set git remote (y/n): "
+		read set_git_remote
+		if [[ $set_git_remote != 'y' && $set_git_remote != 'n' ]]; then
+			cecho "Answer y or n." red
+			unset set_git_remote
+		fi
+	done
+
+	if [[ $set_git_remote == 'y' ]]; then
+		while [ -z $git_remote ]; do
+			read -e -p "Git Remote URL: " git_remote
+		done
+	fi
+
+
+	# while [ -z $site ]; do
+	# 	read -e -p "Name of new site directory: " site
+
+	# 	if [ -z $site ]; then
+	# 		cecho "You must enter a directory name." red
+	# 	elif [ -d "$path/www/$site" ]; then
+	# 		cecho "Directory already exists." red
+	# 		unset site
+	# 	fi
+	# done
+
 	# Inform the user of what's about to happen and give them a chance to back out
 	# =============================================================================
 	cecho "\nAbout to perform the following:" normal bold
@@ -358,9 +389,12 @@ if [[ $action = 'new' || $action = 'make' || $action = 'create' ]]; then
 "\twp core download --allow-root $installversion\n"\
 "\twp core config --dbname=\"$db_name\" --dbuser=wp --dbpass=wp --dbhost=\"localhost\" --allow-root$wp_debug_text\n"\
 "\twp core install --url=$domain --title=\"$site - A WordPress Site\" --admin_user=admin --admin_password=admin --admin_email=demo@example.com --allow-root\n"\
-"\tcd wp-content/themes\n"\
+"cd wp-content/themes\n"\
 "\tgit clone https://github.com/VCUarts/VCUarts-bones.git $site\n"\
-"\t\tcd -\n"\
+"cd $site\n"\
+"\tgit remote set-url origin $git_remote\n"\
+"\tgit commit -m 'first commit'\n"\
+"cd -\n"\
 "else\n"\
 "\techo 'Updating WordPress in $site/htdocs...'\n"\
 "\twp core update --allow-root\n"\
