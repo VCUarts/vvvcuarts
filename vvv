@@ -359,7 +359,7 @@ if [[ $action = 'new' || $action = 'make' || $action = 'create' ]]; then
 "\twp core config --dbname=\"$db_name\" --dbuser=wp --dbpass=wp --dbhost=\"localhost\" --allow-root$wp_debug_text\n"\
 "\twp core install --url=$domain --title=\"$site - A WordPress Site\" --admin_user=admin --admin_password=admin --admin_email=demo@example.com --allow-root\n"\
 "\tcd wp-content/themes\n"\
-"\tgit clone https://github.com/streeetlamp/bones.git $site\n"\
+"\tgit clone https://github.com/VCUarts/VCUarts-bones.git $site\n"\
 "\t\tcd -\n"\
 "else\n"\
 "\techo 'Updating WordPress in $site/htdocs...'\n"\
