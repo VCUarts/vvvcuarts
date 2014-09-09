@@ -394,6 +394,8 @@ if [[ $action = 'new' || $action = 'make' || $action = 'create' ]]; then
 "cd $site\n"\
 "\tgit remote set-url origin $git_remote\n"\
 "\tgit commit -m 'first commit'\n"\
+"\tbundle install\n"\
+"\tnpm install\n"\
 "cd -\n"\
 "else\n"\
 "\techo 'Updating WordPress in $site/htdocs...'\n"\
