@@ -29,7 +29,7 @@
 # Helper function for printing out usage information.
 # =============================================================================
 usage() {
-	printf "Usage: vvv [-a create|delete|list] [-n site] [-v version] [-d domain] [-p path/to/vvv] [-f] [-x]\n\n"\
+	printf "Usage: vvv [-a create|delete|list|dbtool] [-n site] [-v version] [-d domain] [-p path/to/vvv] [-f] [-x]\n\n"\
 "Options:\n"\
 "-a   action      Can be create, delete, or list\n"\
 "-d   domain      Desired domain (e.g. mysite.dev)\n"\
