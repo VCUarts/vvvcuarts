@@ -48,6 +48,11 @@ usage() {
 done_text() { echo -e "\033[32mDone.\033[0m"; return; }
 
 # =============================================================================
+# Helper timestamp for SQL dumps
+# =============================================================================
+timestamp=$(date +%m-%d-%s)
+
+# =============================================================================
 # Helper function to make colored text easier to code and more readable
 # within the code.
 # =============================================================================
@@ -155,12 +160,12 @@ done
 # Get the action if it was not specified
 # =============================================================================
 while [ -z $action ]; do
-	read -e -p "Action (create|delete|list): " action
+	read -e -p "Action (create|delete|list|dbtool): " action
 
 	if [ -z $action ]; then
 		cecho "You must choose an action." red
-	elif [[ $action != 'create' && $action != 'delete' && $action != 'list' ]]; then
-		cecho "Answer create, delete, or list." red
+	elif [[ $action != 'create' && $action != 'delete' && $action != 'list' && $action != 'dbtool' ]]; then
+		cecho "Answer create, delete, list or dbtool." red
 		unset action
 	fi
 done
@@ -171,7 +176,7 @@ done
 # This is placed outside of the action conditionals below because setting the
 # directory is required for every possible action.
 # =============================================================================
-if [[ $action = 'new' || $action = 'make' || $action = 'create' || $action = 'delete' || $action = 'teardown' || $action = 'rm' || $action = 'list' ]]; then
+if [[ $action = 'new' || $action = 'make' || $action = 'create' || $action = 'delete' || $action = 'teardown' || $action = 'rm' || $action = 'list' || $action = 'dbtool' ]]; then
 	# Get VVV root dir
 	if [ ! -z $path ]; then
 		path=$path
@@ -222,6 +227,8 @@ if [[ $action = 'new' || $action = 'make' || $action = 'create' ]]; then
 	# =============================================================================
 
 	# Get site dir name if not supplied as argument
+
+	# TO DO: i dont think this first if should be here
 	if [ -d "$path/www/$site" ]; then
 		cecho "Directory $path/www/$site already exists." red
 		unset site
@@ -532,6 +539,85 @@ elif [[ $action = 'list' ]]; then
 		fi
 	done
 	exit
+
+elif [[ $action = 'dbtool' ]]; then
+
+	while [ -z $site ]; do
+		read -e -p "Name of site to use dbtool on: " site
+
+		if [ -z $site ]; then
+			cecho "You must enter a directory name." red
+		elif [ ! -d "$path/www/$site" ]; then
+			cecho "Directory does not exist." red
+			unset site
+		fi
+	done
+
+	# Check if we have an SQL file that matches this site in the same directory
+	if [ -e "$site.sql" ]; then
+	  echo -e "Importing '$site'.sql ... "
+	else
+	  cecho "No SQL file found to import, make sure it is named $site.sql ... " red
+	  exit
+	fi
+
+	# Check if a DB backup folder exists, create one if not 
+	if [ -d "$path/www/$site/db-backup" ]; then
+	  echo -e "$site/db-backup already exists...moving on"
+	else
+	  cecho "Creating db-backup" yellow
+	  cd $path/www/$site
+	  mkdir db-backup
+	fi
+
+	# =============================================================================
+	# Dump + Reset + Import
+	# =============================================================================
+
+	# Dump our backup
+	cecho "Dumping a backup of current $site DB..." yellow
+	vagrant ssh -c "cd /srv/www/'$site' && wp db export /srv/www/'$site'/db-backup/'$timestamp'.sql"
+
+	# ARE YOU SURE YOU WANT TO RESET YOUR DATABASE
+	while [ -z $reset_db ]; do
+	  echo -n "Are you totally sure you want to reset the database (y/n)? "
+	  read reset_db
+	  if [ $reset_db = 'y' ]; then
+
+	    # Reset the DB
+	    cecho "Resetting $site DB..." yellow
+	    vagrant ssh -c "cd /srv/www/'$site' && wp db reset --yes"
+
+	  elif [ $reset_db = 'n' ]; then
+	    echo -e "Not going to then, quitting... "
+	    exit
+	  else
+	    cecho "Answer y or n." red
+	    unset reset_db
+	  fi
+	done
+
+	# Import new DB
+	cecho "Importing new $site DB..." yellow
+	vagrant ssh -c "cd /srv/www/'$site' && wp db import"
+
+	# =============================================================================
+
+	# Should we delete the SQL file we just imported
+	while [ -z $delete_newdb ]; do
+	  echo -n "Delete the database sql file we just imported (y/n)? "
+	  read delete_newdb
+	  if [ $delete_newdb = 'y' ]; then
+	    rm $site.sql
+	  elif [ $delete_newdb = 'n' ]; then
+	    echo -e "Not going to delete it then, moving on... "
+	  else
+	    cecho "Answer y or n." red
+	    unset delete_newdb
+	  fi
+	done
+
+	done_text
 
 else
 	usage
