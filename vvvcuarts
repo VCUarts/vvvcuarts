@@ -555,7 +555,7 @@ elif [[ $action = 'dbtool' ]]; then
 
 	# Check if we have an SQL file that matches this site in the same directory
 	if [ -e "$site.sql" ]; then
-	  echo -e "Importing '$site'.sql ... "
+	  echo -e "Importing $site.sql ... "
 	else
 	  cecho "No SQL file found to import, make sure it is named $site.sql ... " red
 	  exit
@@ -599,7 +599,7 @@ elif [[ $action = 'dbtool' ]]; then
 
 	# Import new DB
 	cecho "Importing new $site DB..." yellow
-	vagrant ssh -c "cd /srv/www/'$site' && wp db import"
+	vagrant ssh -c "cd /srv/www/'$site' && wp db import /srv/www/'$site'.sql"
 
 	# =============================================================================
 
