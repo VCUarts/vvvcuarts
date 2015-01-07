@@ -229,12 +229,6 @@ if [[ $action = 'new' || $action = 'make' || $action = 'create' ]]; then
 	# =============================================================================
 
 	# Get site dir name if not supplied as argument
-
-	# TO DO: i dont think this first if should be here
-	if [ -d "$path/www/$site" ]; then
-		cecho "Directory $path/www/$site already exists." red
-		unset site
-	fi
 	while [ -z $site ]; do
 		read -e -p "Name of new site directory: " site
 
@@ -330,18 +324,6 @@ if [[ $action = 'new' || $action = 'make' || $action = 'create' ]]; then
 			read -e -p "Git Remote URL: " git_remote
 		done
 	fi
-
-
-	# while [ -z $site ]; do
-	# 	read -e -p "Name of new site directory: " site
-
-	# 	if [ -z $site ]; then
-	# 		cecho "You must enter a directory name." red
-	# 	elif [ -d "$path/www/$site" ]; then
-	# 		cecho "Directory already exists." red
-	# 		unset site
-	# 	fi
-	# done
 
 	# Inform the user of what's about to happen and give them a chance to back out
 	# =============================================================================
