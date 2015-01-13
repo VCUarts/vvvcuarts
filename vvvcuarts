@@ -389,10 +389,6 @@ if [[ $action = 'new' || $action = 'make' || $action = 'create' ]]; then
 "\tnpm install\n"\
 "cd -\n"\
 "\twp theme activate $site\n"\
-"\twp plugin install wordpress-importer --activate\n"\
-"\twp plugin install advanced-custom-fields --activate\n"\
-"\twp plugin install last-modified-footer --activate\n"\
-"\twp plugin install debug-bar --activate\n"\
 "else\n"\
 "\techo 'Updating WordPress in $site/htdocs...'\n"\
 "\twp core update --allow-root\n"\
